@@ -10,6 +10,8 @@ const SAMPLE_ORDERS = [
   { id: "ORD-101", customer: "Priya Sharma", product: "Vitamin C Serum (30ml)", value: "₹699", status: "Out for Delivery", notes: "BlueDart BD-982103. Expected by 6 PM today" },
   { id: "ORD-102", customer: "Rahul Verma", product: "Hydrating Sunscreen SPF 50", value: "₹499", status: "Delivered", notes: "Delhivery DL-441029. Delivered 14 days ago" },
   { id: "ORD-103", customer: "Ananya Patel", product: "Green Tea Face Wash + Toner", value: "₹850", status: "Processing", notes: "Ordered 3 hours ago. Eligible for cancellation" },
+  { id: "ORD-104", customer: "Meera Iyer", product: "Barrier Repair Moisturizer (50ml)", value: "₹799", status: "Delivered", notes: "Delhivery DL-771204. Delivered 3 days ago" },
+  { id: "ORD-105", customer: "Kabir Nair", product: "Aloe Gel Cleanser (150ml)", value: "₹349", status: "Shipped", notes: "BlueDart BD-550981. Expected in 2 days" },
 ];
 
 const LABEL: Record<Phase, string> = {
@@ -248,6 +250,7 @@ export default function Page() {
   return (
     <div className="wrap">
       <header>
+        <p className="eyebrow"><span className="eyebrow-mark" />AURA SKINCARE / CUSTOMER CARE</p>
         <h1>Aria · Aura Skincare Voice Support</h1>
         <p>Click <b>Start Call</b>, allow the microphone, and talk to Aria. Best in desktop Chrome or Edge, with headphones to avoid echo.</p>
       </header>
@@ -328,8 +331,9 @@ export default function Page() {
 
         <div>
           <div className="card">
-            <h2>Test orders</h2>
-            <table>
+            <h2>Test orders <span className="section-count">{SAMPLE_ORDERS.length}</span></h2>
+            <div className="table-scroll">
+            <table className="orders-table">
               <thead>
                 <tr><th>ID</th><th>Product</th><th>Status</th></tr>
               </thead>
@@ -337,12 +341,13 @@ export default function Page() {
                 {SAMPLE_ORDERS.map((o) => (
                   <tr key={o.id}>
                     <td><code>{o.id}</code></td>
-                    <td>{o.product}<br /><span style={{ color: "#6b7a72" }}>{o.customer} · {o.value}<br />{o.notes}</span></td>
-                    <td>{o.status}</td>
+                    <td>{o.product}<br /><span className="order-meta">{o.customer} · {o.value}<br />{o.notes}</span></td>
+                    <td><span className={`status-pill ${o.status.toLowerCase().replaceAll(" ", "-")}`}>{o.status}</span></td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
           <div className="card">
             <h2>Things to try</h2>
@@ -355,6 +360,8 @@ export default function Page() {
               <li>“Is there a shipping fee on a 300 rupee order?”</li>
               <li>“Can you book me a flight to Goa?”</li>
               <li>“Mera order kahan hai?” (Hinglish, no ID given)</li>
+              <li>“Can I return ORD-104? It was delivered three days ago.”</li>
+              <li>“Where is ORD-105, and can I cancel it?”</li>
             </ul>
             <p className="hint">Order IDs can be said as “ORD 101” or “O R D one zero one”.</p>
           </div>

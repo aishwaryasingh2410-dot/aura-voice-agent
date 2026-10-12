@@ -21,10 +21,16 @@ check("ORD-102 return NOT eligible (14 days)", b.found && b.return.eligible === 
 const c: any = getOrderDetails("ORD-103");
 check("ORD-103 cancellable", c.found && c.cancellation.eligible === true);
 
-const d: any = getOrderDetails("ORD-999");
-check("ORD-999 not found", d.found === false && d.error === "ORDER_NOT_FOUND");
+const d: any = getOrderDetails("ORD-104");
+check("ORD-104 found, return eligible within 7 days", d.found && d.return.eligible === true);
 
-const e: any = getOrderDetails(undefined);
-check("missing id handled", e.found === false && e.error === "MISSING_OR_UNREADABLE_ORDER_ID");
+const e: any = getOrderDetails("ORD-105");
+check("ORD-105 found, shipped and not cancellable", e.found && e.status === "Shipped" && e.cancellation.eligible === false);
+
+const f: any = getOrderDetails("ORD-999");
+check("ORD-999 not found", f.found === false && f.error === "ORDER_NOT_FOUND");
+
+const g: any = getOrderDetails(undefined);
+check("missing id handled", g.found === false && g.error === "MISSING_OR_UNREADABLE_ORDER_ID");
 
 process.exit(failed ? 1 : 0);

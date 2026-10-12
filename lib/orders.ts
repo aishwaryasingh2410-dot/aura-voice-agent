@@ -46,6 +46,27 @@ export const ORDERS: Record<string, Order> = {
     status: "Processing",
     note: "Ordered 3 hours ago. Eligible for cancellation",
   },
+  "ORD-104": {
+    id: "ORD-104",
+    customer: "Meera Iyer",
+    product: "Barrier Repair Moisturizer (50ml)",
+    value: 799,
+    status: "Delivered",
+    carrier: "Delhivery",
+    tracking: "DL-771204",
+    note: "Delivered 3 days ago",
+    deliveredDaysAgo: 3,
+  },
+  "ORD-105": {
+    id: "ORD-105",
+    customer: "Kabir Nair",
+    product: "Aloe Gel Cleanser (150ml)",
+    value: 349,
+    status: "Shipped",
+    carrier: "BlueDart",
+    tracking: "BD-550981",
+    note: "Picked up today. Expected in 2 days",
+  },
 };
 
 const WORD_DIGITS: Record<string, string> = {

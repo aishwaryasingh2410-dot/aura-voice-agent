@@ -1,7 +1,13 @@
-const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 
-// Keep thinking disabled on Flash models to reduce voice-response latency.
-export const thinkingConfig = MODEL.includes("2.5-flash") ? { thinkingBudget: 0 } : undefined;
+// Simple support questions benefit from the lightest available reasoning mode.
+export const thinkingConfig = MODEL.includes("3.5-flash-lite")
+  ? { thinkingLevel: "minimal" }
+  : MODEL.startsWith("gemini-3")
+    ? { thinkingLevel: "low" }
+    : MODEL.includes("2.5-flash")
+      ? { thinkingBudget: 0 }
+      : undefined;
 
 export async function callGemini(body: any) {
   const key = process.env.GEMINI_API_KEY;

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { callGemini, thinkingConfig } from "@/lib/gemini";
 import { SYSTEM_PROMPT } from "@/lib/prompt";
-import { TOOL_DECLARATIONS, runTool } from "@/lib/orders";
+import { TOOL_DECLARATIONS, normalizeOrderId, runTool } from "@/lib/orders";
 
 export const maxDuration = 30;
 
@@ -18,12 +18,31 @@ export async function POST(req: Request) {
 
     const convo: any[] = [...contents];
     const toolCalls: { name: string; args: any; result: any }[] = [];
+    const latestUserText = [...contents].reverse().find((entry: any) => entry.role === "user" && entry.parts?.some((part: any) => part.text))?.parts
+      ?.map((part: any) => part.text || "").join(" ") ?? "";
+    const mentionsOrderIntent = /\b(order|ord|track(?:ing)?|cancel|return|refund|deliver(?:y|ed)?|status)\b/i.test(latestUserText);
+    const orderIdMatch = latestUserText.match(/\b(?:ord(?:er)?[\s-]*)?\d{2,}\b/i);
+    const explicitOrderId = mentionsOrderIntent && orderIdMatch ? normalizeOrderId(orderIdMatch[0]) : null;
+    // Resolve explicit order requests locally to skip Gemini's separate tool-selection turn.
+    const verifiedOrder = explicitOrderId
+      ? { args: { order_id: explicitOrderId }, result: runTool("get_order_details", { order_id: explicitOrderId }) }
+      : null;
+
+    if (verifiedOrder) {
+      toolCalls.push({ name: "get_order_details", ...verifiedOrder });
+    }
 
     for (let i = 0; i < 4; i++) {
       const data = await callGemini({
-        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        systemInstruction: {
+          parts: [{
+            text: verifiedOrder
+              ? `${SYSTEM_PROMPT}\n\nA verified order lookup has already been performed for this turn. Use this result directly; do not request another lookup: ${JSON.stringify(verifiedOrder.result)}`
+              : SYSTEM_PROMPT,
+          }],
+        },
         contents: convo,
-        tools: [{ functionDeclarations: TOOL_DECLARATIONS }],
+        ...(!verifiedOrder ? { tools: [{ functionDeclarations: TOOL_DECLARATIONS }] } : {}),
         generationConfig: {
           temperature: 0.4,
           maxOutputTokens: 300,
