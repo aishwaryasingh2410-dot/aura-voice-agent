@@ -51,8 +51,6 @@ Use desktop Chrome or Edge (best Web Speech API support) and allow the microphon
 
 ## Section 9 – How I think
 
-> Draft answers to personalise before submitting. They will ask you about these in the review, so rewrite them in your own words and make sure you can explain each point.
-
 **1. Why this architecture and stack?**
 I used a modular pipeline (browser STT → LLM with tool calling → browser TTS) on Next.js/Vercel. It is the quickest route to a public, testable URL with no telephony, and browser speech needs no extra vendor or credits. A modular pipeline also lets me see and control each stage: the transcript is text, so tool calls, guardrails and the post-call summary are easy to reason about and log. Gemini Flash gives fast responses and function calling on a free tier. I kept the server stateless, and I computed policy eligibility in code so the model communicates decisions rather than inventing them.
 
