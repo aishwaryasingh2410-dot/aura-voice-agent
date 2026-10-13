@@ -304,29 +304,6 @@ export default function Page() {
             </div>
           </div>
 
-          {phase === "ended" && (
-            <div className="card">
-              <h2>Post-call report</h2>
-              <h3 style={{ margin: "0 0 6px", fontSize: "0.9rem" }}>Transcript</h3>
-              {transcriptOnly.length === 0 ? (
-                <p className="empty">No transcript.</p>
-              ) : (
-                <table>
-                  <tbody>
-                    {transcriptOnly.map((m) => (
-                      <tr key={m.id}>
-                        <td style={{ width: 80, color: "#6b7a72" }}>{m.time}</td>
-                        <td style={{ width: 70, fontWeight: 600 }}>{m.role === "agent" ? "Aria" : "Customer"}</td>
-                        <td>{m.text}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-              <h3 style={{ margin: "16px 0 6px", fontSize: "0.9rem" }}>Structured call outcome</h3>
-              {summarising ? <p className="empty">Generating summary…</p> : <pre>{JSON.stringify(summary, null, 2)}</pre>}
-            </div>
-          )}
         </div>
 
         <div>
@@ -367,6 +344,36 @@ export default function Page() {
           </div>
         </div>
       </div>
+
+      {phase === "ended" && (
+        <section className="card post-call-report">
+          <h2>Post-call report</h2>
+          <div className="report-grid">
+            <div className="report-transcript">
+              <h3>Transcript</h3>
+              {transcriptOnly.length === 0 ? (
+                <p className="empty">No transcript.</p>
+              ) : (
+                <table>
+                  <tbody>
+                    {transcriptOnly.map((m) => (
+                      <tr key={m.id}>
+                        <td className="transcript-time">{m.time}</td>
+                        <td className="transcript-role">{m.role === "agent" ? "Aria" : "Customer"}</td>
+                        <td>{m.text}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+            <div className="report-outcome">
+              <h3>Structured call outcome</h3>
+              {summarising ? <p className="empty">Generating summary…</p> : <pre>{JSON.stringify(summary, null, 2)}</pre>}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
